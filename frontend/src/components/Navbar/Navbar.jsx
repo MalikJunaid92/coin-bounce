@@ -1,14 +1,27 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 import styles from "./Navbar.module.css";
-const Navbar = () => {
-  const isAuthenticated= false;
+import { useSelector } from "react-redux";
+import { signout } from "../../api/internal";
+import { resetUser } from "../../store/userSlice";
+import { useDispatch } from "react-redux";
+
+function Navbar() {
+  const dispatch = useDispatch();
+
+  const isAuthenticated = useSelector((state) => state.user.auth);
+
+  const handleSignout = async () => {
+    await signout();
+    dispatch(resetUser());
+  };
+
   return (
     <>
       <nav className={styles.navbar}>
         <NavLink to="/" className={`${styles.logo} ${styles.inActiveStyle}`}>
           CoinBounce
         </NavLink>
+
         <NavLink
           to="/"
           className={({ isActive }) =>
@@ -17,6 +30,7 @@ const Navbar = () => {
         >
           Home
         </NavLink>
+
         <NavLink
           to="crypto"
           className={({ isActive }) =>
@@ -25,6 +39,7 @@ const Navbar = () => {
         >
           Cryptocurrencies
         </NavLink>
+
         <NavLink
           to="blogs"
           className={({ isActive }) =>
@@ -33,6 +48,7 @@ const Navbar = () => {
         >
           Blogs
         </NavLink>
+
         <NavLink
           to="submit"
           className={({ isActive }) =>
@@ -41,34 +57,40 @@ const Navbar = () => {
         >
           Submit a blog
         </NavLink>
-        {isAuthenticated? <div> <NavLink><button className={styles.signOutButton}>Sign Out</button> </NavLink></div>:
-       <div> 
-        <NavLink
-          to="log-in"
-          className={({ isActive }) =>
-            isActive ? styles.activeStyle : styles.inActiveStyle
-          }
-        >
-          <button className={styles.logInButton}>
-          Log In
-          </button>
-        </NavLink>
-        <NavLink
-          to="sign-up"
-          className={({ isActive }) =>
-            isActive ? styles.activeStyle : styles.inActiveStyle
-          }
-        >
-          <button className={styles.signUpButton}>
-          Sign Up
-          </button>
-        </NavLink>
-        </div>
-}
+
+        {isAuthenticated ? (
+          <div>
+            <NavLink>
+              <button className={styles.signOutButton} onClick={handleSignout}>
+                Sign Out
+              </button>
+            </NavLink>
+          </div>
+        ) : (
+          <div>
+            <NavLink
+              to="login"
+              className={({ isActive }) =>
+                isActive ? styles.activeStyle : styles.inActiveStyle
+              }
+            >
+              <button className={styles.logInButton}>Log In</button>
+            </NavLink>
+
+            <NavLink
+              to="signup"
+              className={({ isActive }) =>
+                isActive ? styles.activeStyle : styles.inActiveStyle
+              }
+            >
+              <button className={styles.signUpButton}>Sign Up</button>
+            </NavLink>
+          </div>
+        )}
       </nav>
       <div className={styles.separator}></div>
     </>
   );
-};
+}
 
 export default Navbar;

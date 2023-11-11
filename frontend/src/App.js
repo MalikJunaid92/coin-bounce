@@ -5,8 +5,10 @@ import Home from "./pages/Home/Home";
 import styles from "./App.module.css";
 import Protected from "./components/Protected/Protected";
 import Error from "./pages/Error/Error";
+import Login from "./pages/Login/Login";
+import { useSelector } from "react-redux";
 function App() {
-  const isAuth= false;
+  const isAuth= useSelector((state)=>state.user.auth);
   return (
     <div className={styles.conatiner}>
       <BrowserRouter>
@@ -46,12 +48,12 @@ function App() {
               }
             />
             <Route
-              path="log-in"
+              path="login"
               exact
-              element={<div className={styles.main}>Log in</div>}
+              element={<div className={styles.main}> <Login /> </div>}
             />
             <Route
-              path="sign-up"
+              path="signup"
               exact
               element={<div className={styles.main}>Sign up</div>}
             />

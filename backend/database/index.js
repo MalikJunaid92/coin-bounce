@@ -1,6 +1,6 @@
 const mongoose= require('mongoose')
 
-const {MongoDb}= require('../config/index')
+const MongoDb='mongodb+srv://Junaid:junaid1234@traversycluster.lexf7ss.mongodb.net/?retryWrites=true&w=majority' 
 
 const connectDB= async()=>
 {
