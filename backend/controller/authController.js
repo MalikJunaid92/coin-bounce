@@ -4,7 +4,6 @@ const bcrypt = require("bcryptjs");
 const UserDTO = require("../dto/user");
 const JWTService = require("../services/JWTServices");
 const RefreshToken = require("../models/token");
-
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,25}$/;
 const storeRefreshToken = async (token, userId) => {
   try {
@@ -168,7 +167,6 @@ const authController = {
 
     const accessToken = JWTService.signAccessToken({ _id: user._id }, "30m");
     const refreshToken = JWTService.signRefreshToken({ _id: user._id }, "60m");
-
     // update refresh token in database
     try {
       await RefreshToken.updateOne(

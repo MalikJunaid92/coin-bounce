@@ -7,6 +7,7 @@ import { login } from "../../api/internal";
 import { setUser } from "../../store/userSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Login() {
   const navigate = useNavigate();
@@ -21,12 +22,14 @@ function Login() {
       password: values.password,
     };
 
-    const response = await login(data);
-
+    const response = await axios.post('http://localhost:5000/login',{
+      "username": "blackoop",
+      "password": "Malik123"
+  } );
     if (response.status === 200) {
       // 1. setUser
       const user = {
-        _id: response.data.user._id,
+        id: response.data.user.id,
         email: response.data.user.email,
         username: response.data.user.username,
         auth: response.data.auth,
