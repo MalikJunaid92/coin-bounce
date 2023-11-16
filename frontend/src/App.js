@@ -10,9 +10,15 @@ import { useSelector } from "react-redux";
 import Signup from "./pages/Signup/Signup";
 import Crypto from "./pages/Crypto/Crypto";
 import Blog from "./pages/Blog/Blog";
+import SubmitBlog from "./pages/SubmitBlog/SubmitBlog";
+import BlogDetails from "./pages/BlogDetails/BlogDetails";
+import UpdateBlog from "./pages/UpdateBlog/UpdateBlog";
+import useAutoLogin from "./hooks/useAutoLogin";
+import Loader from "./components/Loader/Loader";
 function App() {
   const isAuth= useSelector((state)=>state.user.auth);
-  return (
+  const Loading= useAutoLogin()
+  return Loading? <Loader text='....'/> :(
     <div className={styles.conatiner}>
       <BrowserRouter>
         <div className={styles.layout}>
@@ -42,14 +48,33 @@ function App() {
               }
             />
             <Route
+              path="blog/:id"
+              exact
+              element={
+              <Protected isAuth={isAuth}>
+              <div className={styles.main}><BlogDetails/></div>
+              </Protected>
+              }
+            />
+              <Route
+              path="blog-update/:id"
+              exact
+              element={
+              <Protected isAuth={isAuth}>
+              <div className={styles.main}><UpdateBlog/></div>
+              </Protected>
+              }
+            />
+            <Route
               path="submit"
               exact
               element={
               <Protected isAuth={isAuth}>
-              <div className={styles.main}>Submit a blog Page</div>
+              <div className={styles.main}> <SubmitBlog/> </div>
               </Protected>
               }
             />
+            
             <Route
               path="login"
               exact

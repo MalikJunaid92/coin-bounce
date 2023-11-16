@@ -7,7 +7,6 @@ import { login } from "../../api/internal";
 import { setUser } from "../../store/userSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 function Login() {
   const navigate = useNavigate();
@@ -15,34 +14,38 @@ function Login() {
   const dispatch = useDispatch();
 
   const [error, setError] = useState("");
-
   const handleLogin = async () => {
-    const data = {
-      username: values.username,
-      password: values.password,
-    };
-
-    const response = await axios.post('http://localhost:5000/login',{
-      "username": "blackoop",
-      "password": "Malik123"
-  } );
-    if (response.status === 200) {
-      // 1. setUser
-      const user = {
-        id: response.data.user.id,
-        email: response.data.user.email,
-        username: response.data.user.username,
-        auth: response.data.auth,
+    try {
+      const data = {
+        username: values.username,
+        password: values.password,
       };
-
-      dispatch(setUser(user));
-      // 2. redirect -> homepage
-      navigate("/");
-    } else if (response.code === "ERR_BAD_REQUEST") {
-      // display error message
-      setError(response.response.data.message);
+  
+      const response = await login(data);
+  
+      if (response && response.data && response.data.user && response.status === 200) {
+        const { id, email, username, auth } = response.data.user;
+  
+        const user = {
+          id,
+          email,
+          username,
+          auth,
+        };
+  
+        dispatch(setUser(user));
+        navigate("/");
+      } else if (response && response.code === "ERR_BAD_REQUEST") {
+        setError(response.response.data.message);
+      } else {
+        setError("An unexpected error occurred.");
+      }
+    } catch (error) {
+      setError("An error occurred while logging in.");
+      console.error("Login error:", error);
     }
   };
+  
 
   const { values, touched, handleBlur, handleChange, errors } = useFormik({
     initialValues: {
