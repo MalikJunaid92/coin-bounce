@@ -15,37 +15,28 @@ function Login() {
 
   const [error, setError] = useState("");
   const handleLogin = async () => {
-    try {
-      const data = {
-        username: values.username,
-        password: values.password,
+    const data = {
+      username: values.username,
+      password: values.password,
+    };
+
+    const response = await login(data);
+    if (response.status === 200) {
+      // 1. setUser
+      const user = {
+        _id: response.data.user._id,
+        email: response.data.user.email,
+        username: response.data.user.username,
+        auth: response.data.auth,
       };
-  
-      const response = await login(data);
-  
-      if (response && response.data && response.data.user && response.status === 200) {
-        const { id, email, username, auth } = response.data.user;
-  
-        const user = {
-          id,
-          email,
-          username,
-          auth,
-        };
-  
-        dispatch(setUser(user));
-        navigate("/");
-      } else if (response && response.code === "ERR_BAD_REQUEST") {
-        setError(response.response.data.message);
-      } else {
-        setError("An unexpected error occurred.");
-      }
-    } catch (error) {
-      setError("An error occurred while logging in.");
-      console.error("Login error:", error);
+      dispatch(setUser(user));
+      // 2. redirect -> homepage
+      navigate();
+    } else if (response.code === "ERR_BAD_REQUEST") {
+      // display error message
+      setError(response.response.data.message);
     }
   };
-  
 
   const { values, touched, handleBlur, handleChange, errors } = useFormik({
     initialValues: {
@@ -100,7 +91,7 @@ function Login() {
           Register
         </button>
       </span>
-      {error !== "" ? <p className={styles.errorMessage}>{error}</p> : ""}
+      {error !="" ? <p className={styles.errorMessage}>{error}</p> : ""}
     </div>
   );
 }

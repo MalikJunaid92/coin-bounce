@@ -1,17 +1,20 @@
 import styles from "./Comment.module.css";
+import Comment from "../Comment/Comment";
 
-function Comment({ comment }) {
-  const date = new Date(comment.createdAt).toDateString();
-
+function CommentList({ comments }) {
   return (
-    <div className={styles.comment}>
-      <div className={styles.header}>
-        <div className={styles.author}>{comment.authorUsername}</div>
-        <div className={styles.date}>{date}</div>
-        <div className={styles.commentText}>{comment.content}</div>
+    <div className={styles.commentListWrapper}>
+      <div className={styles.commentList}>
+        {comments.length === 0 ? (
+          <div className={styles.noComments}>No comments posted</div>
+        ) : (
+          comments.map((comment) => (
+            <Comment key={comment._id} comment={comment} />
+          ))
+        )}
       </div>
     </div>
   );
 }
 
-export default Comment;
+export default CommentList;

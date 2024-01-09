@@ -4,18 +4,8 @@ const bcrypt = require("bcryptjs");
 const UserDTO = require("../dto/user");
 const JWTService = require("../services/JWTServices");
 const RefreshToken = require("../models/token");
+
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,25}$/;
-const storeRefreshToken = async (token, userId) => {
-  try {
-    const newToken = new RefreshToken({
-      token: token,
-      userId: userId,
-    });
-    await newToken.save();
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 const authController = {
   async register(req, res, next) {
@@ -91,7 +81,7 @@ const authController = {
     }
 
     // store refresh token in db
-    await storeRefreshToken(refreshToken, user._id);
+    await JWTService.storeRefreshToken(refreshToken, user._id);
 
     // send tokens in cookie
     res.cookie("accessToken", accessToken, {
@@ -167,6 +157,7 @@ const authController = {
 
     const accessToken = JWTService.signAccessToken({ _id: user._id }, "30m");
     const refreshToken = JWTService.signRefreshToken({ _id: user._id }, "60m");
+
     // update refresh token in database
     try {
       await RefreshToken.updateOne(
@@ -255,7 +246,7 @@ const authController = {
 
       const refreshToken = JWTService.signRefreshToken({ _id: id }, "60m");
 
-      await RefreshToken.updateOne({ _id: id, token: refreshToken });
+      await RefreshToken.updateOne({ _id: id }, { token: refreshToken });
 
       res.cookie("accessToken", accessToken, {
         maxAge: 1000 * 60 * 60 * 24,
@@ -277,4 +268,5 @@ const authController = {
     return res.status(200).json({ user: userDto, auth: true });
   },
 };
+
 module.exports = authController;
